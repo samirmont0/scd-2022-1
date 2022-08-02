@@ -2,12 +2,12 @@ package utils;
 
 public class Pessoa {
     private String nome;
-    private int idade;
+    private Long idade;
     private String CPF;
     private Endereco endereco;
     private Trabalho trabalho;
 
-    public Pessoa(String nome, int idade, String CPF, Endereco endereco, Trabalho trabalho) {
+    public Pessoa(String nome, Long idade, String CPF, Endereco endereco, Trabalho trabalho) {
         this.nome = nome;
         this.idade = idade;
         this.CPF = CPF;
@@ -23,11 +23,11 @@ public class Pessoa {
         this.nome = nome;
     }
 
-    public int getIdade() {
+    public Long getIdade() {
         return idade;
     }
 
-    public void setIdade(int idade) {
+    public void setIdade(Long idade) {
         this.idade = idade;
     }
 

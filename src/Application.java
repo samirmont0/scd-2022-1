@@ -7,7 +7,9 @@ public class Application {
         LogInstance logInstance = new LogInstance();
         LoginInstance loginInstance = new LoginInstance(logInstance);
         DBInstance dbInstance = new DBInstance(logInstance);
-        ThreadUsuario threadUsuario = new ThreadUsuario(loginInstance, dbInstance, "a", "a");
-        threadUsuario.start();
+        for(int thread = 1; thread < 100; thread++) {
+            ThreadUsuario threadUsuario = new ThreadUsuario(loginInstance, dbInstance, Integer.toString(thread), Integer.toString(thread));
+            threadUsuario.start();
+        }
     }
 }

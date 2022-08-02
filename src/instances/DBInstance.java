@@ -16,26 +16,38 @@ public class DBInstance extends AbstractConnection {
         super(logInstance);
     }
 
-    public boolean realizaInsert(Long idUsuario, String tabela, String colunas, String dados_inseridos) {
+    public String realizaAcaoBanco(Long idUsuario, String tabela, OperacaoBanco operacao, String colunas, String dados_inseridos, String condicao, String valor) {
+        synchronized (this) {
+            if (operacao == OperacaoBanco.INSERT) {
+                return realizaInsert(idUsuario, tabela, colunas, dados_inseridos);
+            } else if (operacao == OperacaoBanco.DELETE) {
+                return realizaDelete(idUsuario, tabela, condicao);
+            } else if (operacao == OperacaoBanco.SELECT) {
+                return realizaSelect(idUsuario, tabela, condicao);
+            } else if (operacao == OperacaoBanco.UPDATE) {
+                return realizaUpdate(idUsuario, tabela, condicao, colunas, valor);
+            }
+            return "";
+        }
+    }
+
+    private String realizaInsert(Long idUsuario, String tabela, String colunas, String dados_inseridos) {
         String processedQuerry = QUERRY_INSERT
                 .replaceAll(":tabela", tabela)
                 .replaceAll(":colunas", colunas)
                 .replaceAll(":dados_inseridos", dados_inseridos);
-        boolean sucesso = false;
-        synchronized (this) {
-            try {
-                sucesso = statement.execute(processedQuerry);
-                if (sucesso) {
-                    logInstance.registraAcao(idUsuario, tabela, "INSERT", dados_inseridos, null);
-                }
-            } catch (Exception ignored) {
+        int sucesso = -1;
+        try {
+            sucesso = statement.executeUpdate(processedQuerry);
+            if (sucesso != -1) {
+                logInstance.registraAcao(idUsuario, "INSERT", tabela, "[" +dados_inseridos.replaceAll("'", " ")+"]", null);
             }
-
+        } catch (Exception ignored) {
         }
-        return sucesso;
+        return (sucesso != -1) ? "Sucesso" : "Falha";
     }
 
-    public boolean realizaDelete(Long idUsuario, String tabela, String condicao) {
+    private String realizaDelete(Long idUsuario, String tabela, String condicao) {
         String processedQuerryDelete = QUERRY_DELETE
                 .replaceAll(":tabela", tabela)
                 .replaceAll(":condicao", condicao);
@@ -43,41 +55,36 @@ public class DBInstance extends AbstractConnection {
                 .replaceAll(":tabela", tabela)
                 .replaceAll(":condicao", condicao);
         boolean sucesso = false;
-        synchronized (this) {
-            try {
-                ResultSet dados = statement.executeQuery(processedQuerrySelect);
-                String dados_anteriores = convertResultSetString(dados);
-                sucesso = (statement.executeUpdate(processedQuerryDelete) >= 1);
-                if (sucesso) {
-                    logInstance.registraAcao(idUsuario, tabela, "INSERT", null, dados_anteriores);
-                }
-            } catch (Exception ignored) {
+        try {
+            ResultSet dados = statement.executeQuery(processedQuerrySelect);
+            String dados_anteriores = convertResultSetString(dados);
+            sucesso = (statement.executeUpdate(processedQuerryDelete) >= 1);
+            if (sucesso) {
+                logInstance.registraAcao(idUsuario, "DELETE", tabela, null, dados_anteriores);
             }
-
+        } catch (Exception ignored) {
         }
-        return sucesso;
+        return sucesso ? "Sucesso" : "Falha";
     }
 
-    public String realizaSelect(Long idUsuario, String tabela, String condicao) {
+    private String realizaSelect(Long idUsuario, String tabela, String condicao) {
         String processedQuerrySelect = QUERRY_SELECT
                 .replaceAll(":tabela", tabela)
                 .replaceAll(":condicao", condicao);
         String dadosString = "";
-        synchronized (this) {
-            try {
-                ResultSet dados = statement.executeQuery(processedQuerrySelect);
-                dadosString = convertResultSetString(dados);
-                if (!dadosString.equals("")) {
-                    logInstance.registraAcao(idUsuario, tabela, "INSERT", null, dadosString);
-                }
-            } catch (Exception ignored) {
+        try {
+            ResultSet dados = statement.executeQuery(processedQuerrySelect);
+            dadosString = convertResultSetString(dados);
+            if (!dadosString.equals("")) {
+                logInstance.registraAcao(idUsuario, "SELECT", tabela, null, dadosString);
             }
-
+        } catch (Exception ignored) {
         }
+
         return dadosString;
     }
 
-    public boolean realizaUpdate(Long idUsuario, String tabela, String condicao, String coluna, String valor) {
+    private String realizaUpdate(Long idUsuario, String tabela, String condicao, String coluna, String valor) {
         String processedQuerry = QUERRY_UPDATE
                 .replaceAll(":tabela", tabela)
                 .replaceAll(":condicao", condicao)
@@ -88,19 +95,16 @@ public class DBInstance extends AbstractConnection {
                 .replaceAll(":condicao", condicao)
                 .replaceAll("\\*", coluna);
         boolean sucesso = false;
-        synchronized (this) {
-            try {
-                ResultSet dados = statement.executeQuery(processedQuerrySelect);
-                String dados_anteriores = convertResultSetString(dados);
-                sucesso = (statement.executeUpdate(processedQuerry) >= 1);
-                if (sucesso) {
-                    logInstance.registraAcao(idUsuario, tabela, "INSERT", coluna + "=" + valor, dados_anteriores);
-                }
-            } catch (Exception ignored) {
+        try {
+            ResultSet dados = statement.executeQuery(processedQuerrySelect);
+            String dados_anteriores = convertResultSetString(dados);
+            sucesso = (statement.executeUpdate(processedQuerry) >= 1);
+            if (sucesso) {
+                logInstance.registraAcao(idUsuario, "UPDATE", tabela, coluna + "=" + valor, dados_anteriores);
             }
-
+        } catch (Exception ignored) {
         }
-        return sucesso;
+        return sucesso ? "Sucesso" : "Falha";
     }
 
     private String convertResultSetString(ResultSet dados) {

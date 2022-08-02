@@ -4,9 +4,9 @@ public class Endereco {
     private String rua;
     private String bairro;
     private String cidade;
-    private double CEP;
+    private Long CEP;
 
-    public Endereco(String rua, String bairro, String cidade, double CEP) {
+    public Endereco(String rua, String bairro, String cidade, Long CEP) {
         this.rua = rua;
         this.bairro = bairro;
         this.cidade = cidade;
@@ -37,11 +37,11 @@ public class Endereco {
         this.cidade = cidade;
     }
 
-    public double getCEP() {
+    public Long getCEP() {
         return CEP;
     }
 
-    public void setCEP(double CEP) {
+    public void setCEP(Long CEP) {
         this.CEP = CEP;
     }
 }
