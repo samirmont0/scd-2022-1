@@ -1,0 +1,13 @@
+import instances.DBInstance;
+import instances.LogInstance;
+import instances.LoginInstance;
+
+public class Application {
+    public static void main(String[] args) {
+        LogInstance logInstance = new LogInstance();
+        LoginInstance loginInstance = new LoginInstance(logInstance);
+        DBInstance dbInstance = new DBInstance(logInstance);
+        ThreadUsuario threadUsuario = new ThreadUsuario(loginInstance, dbInstance, "a", "a");
+        threadUsuario.start();
+    }
+}

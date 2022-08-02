@@ -1,11 +1,13 @@
+package utils;
+
 public class Pessoa {
     private String nome;
     private int idade;
-    private double CPF;
+    private String CPF;
     private Endereco endereco;
     private Trabalho trabalho;
 
-    public Pessoa(String nome, int idade, double CPF, Endereco endereco, Trabalho trabalho) {
+    public Pessoa(String nome, int idade, String CPF, Endereco endereco, Trabalho trabalho) {
         this.nome = nome;
         this.idade = idade;
         this.CPF = CPF;
@@ -45,11 +47,11 @@ public class Pessoa {
         this.trabalho = trabalho;
     }
 
-    public double getCPF() {
+    public String getCPF() {
         return CPF;
     }
 
-    public void setCPF(double CPF) {
+    public void setCPF(String CPF) {
         this.CPF = CPF;
     }
 }

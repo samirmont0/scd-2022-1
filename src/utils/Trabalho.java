@@ -1,3 +1,5 @@
+package utils;
+
 public class Trabalho {
     private String cargo;
     private double salario;

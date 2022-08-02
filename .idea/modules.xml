@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ConcurrentCrud.iml" filepath="$PROJECT_DIR$/ConcurrentCrud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/scd-2022-1.iml" filepath="$PROJECT_DIR$/scd-2022-1.iml" />
     </modules>
   </component>
 </project>

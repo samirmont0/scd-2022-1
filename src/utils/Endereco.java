@@ -1,3 +1,5 @@
+package utils;
+
 public class Endereco {
     private String rua;
     private String bairro;
